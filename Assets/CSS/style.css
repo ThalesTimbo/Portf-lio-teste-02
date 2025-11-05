@@ -1085,6 +1085,27 @@ blockquote {
     .skill-flip-back p {
         font-size: 12px;
     }
+
+    /* Linguagens: responsividade */
+    .languages {
+        padding: 80px 30px 40px;
+    }
+    .languages .section-title {
+        font-size: 36px;
+        line-height: 1.15;
+        margin-bottom: 28px;
+        word-break: break-word;
+        hyphens: auto;
+    }
+    .lang-filters {
+        gap: 8px;
+        padding: 0 6px;
+        margin-bottom: 20px;
+    }
+    .lang-filter {
+        padding: 8px 14px;
+        font-size: 14px;
+    }
 }
 
 /* Breakpoint: Mobile pequeno */
@@ -1158,6 +1179,24 @@ blockquote {
 
     .skill-name {
         font-size: 16px;
+    }
+
+    /* Linguagens: telas pequenas */
+    .languages {
+        padding: 70px 20px 36px;
+    }
+    .languages .section-title {
+        font-size: 30px;
+        line-height: 1.12;
+        margin-bottom: 22px;
+    }
+    .lang-filters {
+        gap: 8px;
+        justify-content: flex-start;
+    }
+    .lang-filter {
+        padding: 8px 12px;
+        font-size: 13px;
     }
 }
 
