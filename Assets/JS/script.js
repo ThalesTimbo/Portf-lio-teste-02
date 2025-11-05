@@ -563,3 +563,85 @@
                 setLanguage(next);
             });
         }
+
+        // =========================
+        // Lazy Loading: Reveal on Scroll
+        // =========================
+        function markReveal(elements, variant = 'reveal-up', baseDelay = 60) {
+            if (!elements) return;
+            const arr = elements instanceof NodeList || Array.isArray(elements) ? elements : [elements];
+            arr.forEach((el, idx) => {
+                if (!el) return;
+                el.classList.add('reveal', variant);
+                el.style.setProperty('--reveal-delay', `${idx * baseDelay}ms`);
+            });
+        }
+
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const el = entry.target;
+                if (entry.isIntersecting) {
+                    el.classList.add('in-view');
+                } else {
+                    el.classList.remove('in-view');
+                }
+            });
+        }, { threshold: 0.12, rootMargin: '0px 0px -10% 0px' });
+
+        function observeReveal(elements) {
+            const arr = elements instanceof NodeList || Array.isArray(elements) ? elements : [elements];
+            arr.forEach(el => el && revealObserver.observe(el));
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Hero
+            markReveal(document.querySelector('.hero-content h3'), 'reveal-up', 0);
+            markReveal(document.querySelector('.hero-content h1'), 'reveal-up', 0);
+            markReveal(document.querySelector('.hero-content p'), 'reveal-up', 0);
+            markReveal(document.querySelectorAll('.cta-buttons .btn'), 'reveal-left', 80);
+            markReveal(document.querySelectorAll('.social-icons a'), 'reveal-up', 50);
+
+            // Sobre
+            markReveal(document.querySelector('#Sobre h2'), 'reveal-up', 0);
+            markReveal(document.querySelector('.image-container .profile-image'), 'reveal-scale', 0);
+            markReveal(document.querySelectorAll('.floating-card'), 'reveal-right', 120);
+            markReveal(document.querySelector('.about-text h3'), 'reveal-left', 0);
+            markReveal(document.querySelectorAll('.about-text p'), 'reveal-up', 70);
+            markReveal(document.querySelector('blockquote'), 'reveal-left', 0);
+            markReveal(document.querySelectorAll('.about-buttons .btn'), 'reveal-up', 80);
+
+            // Serviços
+            markReveal(document.querySelector('.about-services h2'), 'reveal-up', 0);
+            markReveal(document.querySelectorAll('.about-services .service-card'), 'reveal-up', 90);
+
+            // Linguagens
+            markReveal(document.querySelector('#Linguagens .section-title'), 'reveal-up', 0);
+            markReveal(document.querySelectorAll('.lang-filter'), 'reveal-up', 40);
+            markReveal(document.querySelectorAll('.lang-item'), 'reveal-scale', 30);
+
+            // Projetos
+            markReveal(document.querySelector('#Portfólio .section-title'), 'reveal-up', 0);
+            markReveal(document.querySelectorAll('.projects-grid .project-card'), 'reveal-up', 90);
+
+            // Contato
+            markReveal(document.querySelector('#Contato h2'), 'reveal-up', 0);
+            markReveal(document.querySelectorAll('.info-card'), 'reveal-left', 100);
+            markReveal(document.querySelector('.connect-card'), 'reveal-up', 0);
+            markReveal(document.querySelector('.form-card'), 'reveal-right', 0);
+
+            // Certificados dentro de Sobre
+            markReveal(document.querySelector('.about-certificates h2'), 'reveal-up', 0);
+            markReveal(document.querySelectorAll('.about-certificates .certificate-card'), 'reveal-up', 80);
+
+            // Observe all reveals
+            observeReveal(document.querySelectorAll('.reveal'));
+
+            // Lazy attribute for images (skip very first above-the-fold if needed)
+            const allImgs = document.querySelectorAll('img');
+            allImgs.forEach((img, idx) => {
+                if (!img.hasAttribute('loading')) {
+                    img.loading = idx === 0 ? 'eager' : 'lazy';
+                    img.decoding = 'async';
+                }
+            });
+        });
