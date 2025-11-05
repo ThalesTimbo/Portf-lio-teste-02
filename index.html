@@ -529,7 +529,12 @@
             </div>
 
             <div class="form-card">
-                <form class="contact-form" id="contactForm">
+                <form class="contact-form" id="contactForm" action="https://formsubmit.co/thales.timbo.dev@gmail.com" method="POST">
+                    <!-- Campos ocultos do FormSubmit -->
+                    <input type="hidden" name="_captcha" value="false">
+                    <input type="hidden" name="_subject" value="Nova mensagem do portfólio">
+                    <input type="hidden" name="_template" value="box">
+                    
                     <div class="form-row">
                         <div class="form-group">
                             <label for="name">Nome Completo</label>

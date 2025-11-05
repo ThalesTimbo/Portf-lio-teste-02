@@ -119,24 +119,62 @@
 
 
 
-        // Formulário de contato
+        // Formulário de contato com FormSubmit (AJAX - sem redirecionamento)
         const contactForm = document.getElementById('contactForm');
+        const submitBtn = contactForm.querySelector('.contact-submit');
 
-        contactForm.addEventListener('submit', (e) => {
+        contactForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            
             const name = document.getElementById('name').value;
             const email = document.getElementById('email').value;
             const message = document.getElementById('message').value;
 
             // Validação simples
             if (!name || !email || !message) {
-                alert('Por favor, preencha todos os campos.');
+                alert('Por favor, preencha todos os campos obrigatórios.');
                 return;
             }
 
-            alert(`Obrigado, ${name}! Sua mensagem foi enviada.`);
+            // Desabilita o botão durante o envio
+            const originalBtnText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
 
-            contactForm.reset();
+            try {
+                // Envia via AJAX usando FormData
+                const formData = new FormData(contactForm);
+                const response = await fetch(contactForm.action, {
+                    method: 'POST',
+                    body: formData,
+                    redirect: 'manual' // Não seguir redirects - previne redirecionamento automático
+                });
+
+                // FormSubmit retorna status 302 (redirect) quando bem-sucedido
+                // Com redirect: 'manual', não seguimos o redirect, mas o envio foi bem-sucedido
+                if (response.type === 'opaqueredirect' || response.status === 0 || response.ok || response.status === 302) {
+                    // Sucesso - o FormSubmit recebeu os dados
+                    alert(`Obrigado, ${name}! Sua mensagem foi enviada com sucesso.`);
+                    contactForm.reset();
+                } else {
+                    throw new Error('Erro ao enviar mensagem');
+                }
+            } catch (error) {
+                // Se houver erro de rede, mostra mensagem de erro
+                // Mas se for apenas o redirect sendo bloqueado, ainda é sucesso
+                if (error.message && error.message.includes('redirect')) {
+                    // Redirect bloqueado = envio bem-sucedido
+                    alert(`Obrigado, ${name}! Sua mensagem foi enviada com sucesso.`);
+                    contactForm.reset();
+                } else {
+                    alert('Erro ao enviar mensagem. Por favor, tente novamente mais tarde.');
+                    console.error('Erro:', error);
+                }
+            } finally {
+                // Restaura o botão
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
+            }
         });
 
         // Carrossel de certificações (mudei para as linguagens de programação)
