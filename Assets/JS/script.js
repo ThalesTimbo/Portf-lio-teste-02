@@ -60,13 +60,19 @@
 
         function updateActiveLink() {
             let current = '';
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop;
-                const sectionHeight = section.clientHeight;
-                if (pageYOffset >= sectionTop - sectionHeight / 3) {
-                    current = section.getAttribute('id');
-                }
-            });
+
+            // Força Home quando no topo da página
+            if (window.scrollY < 100) {
+                current = 'Home';
+            } else {
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (pageYOffset >= sectionTop - sectionHeight / 3) {
+                        current = section.getAttribute('id');
+                    }
+                });
+            }
 
             navLinks.forEach(link => {
                 link.classList.remove('active');
@@ -77,6 +83,9 @@
         }
 
         window.addEventListener('scroll', updateActiveLink);
+        window.addEventListener('hashchange', updateActiveLink);
+        // Atualiza estado ativo no carregamento
+        document.addEventListener('DOMContentLoaded', updateActiveLink);
 
         navLinks.forEach(link => {
             link.addEventListener('click', (e) => {
@@ -84,6 +93,18 @@
                 link.classList.add('active');
             });
         });
+
+        // Clique no logo leva ao topo e ativa Home
+        const logo = document.querySelector('.logo');
+        if (logo) {
+            logo.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                navLinks.forEach(l => l.classList.remove('active'));
+                const homeLink = document.querySelector('.nav-menu a[href="#Home"]');
+                if (homeLink) homeLink.classList.add('active');
+                history.pushState(null, '', '#Home');
+            });
+        }
 
         // Hamburger menu 
         const hamburger = document.querySelector('.hamburger');
@@ -121,38 +142,105 @@
         const certPrevBtn = document.querySelector('.carousel-btn.prev');
         const certNextBtn = document.querySelector('.carousel-btn.next');
 
-        let certCurrentIndex = 0;
-        let certSlidesToShow = window.innerWidth > 768 ? 3 : 1;
-        const certTotalSlides = document.querySelectorAll('.certificate-card').length;
-        let certMaxIndex = certTotalSlides - certSlidesToShow;
+        if (certCarouselWrapper && certPrevBtn && certNextBtn) {
+            let certCurrentIndex = 0;
+            let certSlidesToShow = window.innerWidth > 768 ? 3 : 1;
+            const certTotalSlides = document.querySelectorAll('.certificate-card').length;
+            let certMaxIndex = certTotalSlides - certSlidesToShow;
 
-        function updateCertCarousel() {
-            const translateX = -certCurrentIndex * (100 / certSlidesToShow);
-            certCarouselWrapper.style.transform = `translateX(${translateX}%)`;
+            function updateCertCarousel() {
+                const translateX = -certCurrentIndex * (100 / certSlidesToShow);
+                certCarouselWrapper.style.transform = `translateX(${translateX}%)`;
+            }
+
+            certPrevBtn.addEventListener('click', () => {
+                if (certCurrentIndex > 0) {
+                    certCurrentIndex--;
+                    updateCertCarousel();
+                }
+            });
+
+            certNextBtn.addEventListener('click', () => {
+                if (certCurrentIndex < certMaxIndex) {
+                    certCurrentIndex++;
+                    updateCertCarousel();
+                }
+            });
+
+            window.addEventListener('resize', () => {
+                const newSlidesToShow = window.innerWidth > 768 ? 3 : 1;
+                if (newSlidesToShow !== certSlidesToShow) {
+                    certSlidesToShow = newSlidesToShow;
+                    certMaxIndex = certTotalSlides - certSlidesToShow;
+                    certCurrentIndex = Math.min(certCurrentIndex, certMaxIndex);
+                    updateCertCarousel();
+                }
+            });
         }
 
-        certPrevBtn.addEventListener('click', () => {
-            if (certCurrentIndex > 0) {
-                certCurrentIndex--;
-                updateCertCarousel();
-            }
-        });
-
-        certNextBtn.addEventListener('click', () => {
-            if (certCurrentIndex < certMaxIndex) {
-                certCurrentIndex++;
-                updateCertCarousel();
-            }
-        });
-
-        window.addEventListener('resize', () => {
-            const newSlidesToShow = window.innerWidth > 768 ? 3 : 1;
-            if (newSlidesToShow !== certSlidesToShow) {
-                certSlidesToShow = newSlidesToShow;
-                certMaxIndex = certTotalSlides - certSlidesToShow;
-                certCurrentIndex = Math.min(certCurrentIndex, certMaxIndex);
-                updateCertCarousel();
-            }
-        });
-
         // Linguagens de Programação: sem barras de progresso
+        
+        // Interações da seção Linguagens: filtros e animações
+        const filterButtons = document.querySelectorAll('.lang-filter');
+        const langItems = document.querySelectorAll('.lang-item');
+
+        // Mostrar todos ao carregar com animação suave
+        function showAllLangs() {
+            langItems.forEach((item, idx) => {
+                item.style.display = 'flex';
+                setTimeout(() => item.classList.add('show'), 40 + idx * 30);
+            });
+        }
+
+        // Filtragem por categoria
+        function applyFilter(category) {
+            langItems.forEach((item, idx) => {
+                const match = category === 'all' || item.dataset.category === category;
+                if (match) {
+                    item.style.display = 'flex';
+                    setTimeout(() => item.classList.add('show'), 20 + idx * 20);
+                } else {
+                    item.classList.remove('show');
+                    setTimeout(() => { item.style.display = 'none'; }, 200);
+                }
+            });
+        }
+
+        // Atualiza botão ativo + aplica filtro
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const cat = btn.getAttribute('data-filter');
+                applyFilter(cat);
+            });
+        });
+
+        // Hover com efeito de spotlight acompanhando o mouse
+        langItems.forEach(item => {
+            item.addEventListener('mousemove', (e) => {
+                const rect = item.getBoundingClientRect();
+                const mx = e.clientX - rect.left;
+                const my = e.clientY - rect.top;
+                item.style.setProperty('--mx', `${mx}px`);
+                item.style.setProperty('--my', `${my}px`);
+            });
+        });
+
+        // Anima itens ao entrar no viewport
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const el = entry.target;
+                    el.classList.add('show');
+                    observer.unobserve(el);
+                }
+            });
+        }, { threshold: 0.12 });
+
+        langItems.forEach(el => observer.observe(el));
+
+        // Inicialização
+        if (filterButtons.length && langItems.length) {
+            showAllLangs();
+        }
