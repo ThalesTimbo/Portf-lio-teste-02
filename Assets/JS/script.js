@@ -126,13 +126,13 @@
             const email = document.getElementById('email').value;
             const message = document.getElementById('message').value;
 
-            // Validação Simples
+            // Validação simples
             if (!name || !email || !message) {
-                alert('Harap isi semua field!');
+                alert('Por favor, preencha todos os campos.');
                 return;
             }
 
-            alert(`Terima kasih ${name}! Pesan Anda telah dikirim.`);
+            alert(`Obrigado, ${name}! Sua mensagem foi enviada.`);
 
             contactForm.reset();
         });

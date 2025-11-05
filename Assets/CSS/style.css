@@ -1445,14 +1445,143 @@ blockquote {
     margin-bottom: 60px;
 }
 
-.contact-container {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 80px;
+/* Grid de cartões + formulário */
+.contact-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 1.4fr;
+    gap: 28px;
     max-width: 1200px;
     width: 100%;
 }
+
+.info-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.info-card, .connect-card, .form-card {
+    background: linear-gradient(135deg, #1a1a1a 0%, #212121 100%);
+    border: 1px solid rgba(0, 206, 209, 0.18);
+    border-radius: 16px;
+    padding: 22px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+}
+
+/* shimmer como nos outros cards */
+.info-card::before, .connect-card::before, .form-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 206, 209, 0.22), transparent);
+    transition: left 0.5s ease;
+}
+
+.info-card:hover::before, .connect-card:hover::before, .form-card:hover::before {
+    left: 100%;
+}
+
+.info-card:hover, .connect-card:hover, .form-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(0, 206, 209, 0.5);
+    border-color: #00CED1;
+}
+
+.info-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.icon-box {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #47d7e0 0%, #00CED1 100%);
+    color: #000;
+    box-shadow: 0 8px 24px rgba(0, 206, 209, 0.35);
+}
+
+.icon-box i { font-size: 22px; }
+
+.info-content h3 {
+    font-size: 18px;
+    color: #e9e9e9;
+    margin-bottom: 4px;
+}
+.info-content p {
+    color: #bdbdbd;
+    font-size: 14px;
+}
+
+.connect-card h3 {
+    color: #59dae0;
+    font-size: 18px;
+    margin-bottom: 12px;
+}
+.connect-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #141414;
+    border: 1px solid rgba(0, 206, 209, 0.12);
+    border-radius: 12px;
+    padding: 14px 16px;
+    color: #e6e6e6;
+    text-decoration: none;
+    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+}
+.connect-item + .connect-item { margin-top: 10px; }
+.connect-item i { color: #00CED1; font-size: 18px; }
+.connect-item:hover {
+    transform: translateY(-3px);
+    border-color: #00CED1;
+    box-shadow: 0 10px 28px rgba(0, 206, 209, 0.25);
+}
+
+.form-card { padding: 26px; }
+.form-card form { display: flex; flex-direction: column; gap: 16px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-group label { display: block; color: #bdbdbd; margin-bottom: 6px; font-size: 14px; }
+.form-group input, .form-group textarea {
+    width: 100%;
+    padding: 14px 16px;
+    background: #121212;
+    border: 1px solid rgba(0, 206, 209, 0.25);
+    border-radius: 10px;
+    color: #fff;
+    font-family: 'Poppins', sans-serif;
+}
+.form-group input::placeholder, .form-group textarea::placeholder { color: #8e8e8e; }
+.form-group input:focus, .form-group textarea:focus {
+    outline: none;
+    border-color: #00CED1;
+    box-shadow: 0 0 0 3px rgba(0, 206, 209, 0.12);
+}
+
+.btn-submit.gradient {
+    background: linear-gradient(90deg, #5abfee 0%, #00CED1 100%);
+    border: none;
+    color: #0b0b0b;
+    font-weight: 700;
+    border-radius: 12px;
+}
+.btn-submit.gradient i { color: #0b0b0b; }
+
+/* Alinhamento do botão padrão (igual ao da hero) dentro do formulário */
+.contact-submit { align-self: flex-start; }
+
+/* Ícone no botão padrão (mesma animação do .btn) */
+.btn i { margin-left: 8px; font-size: 0.95em; }
 
 .contact-info {
     flex: 1;
@@ -1582,26 +1711,25 @@ blockquote {
         flex: 0 0 100%;
     }
 
-    .contact h2 {
-        text-align: center;
-    }
+    .contact h2 { text-align: center; }
+    .contact-grid { grid-template-columns: 1fr; gap: 20px; }
+    .form-row { grid-template-columns: 1fr; }
+    .contact-submit { align-self: center; }
+}
 
-    .contact-container {
-        flex-direction: column;
-        gap: 40px;
-        text-align: center;
-    }
+/* Responsividade extra para telas pequenas */
+@media (max-width: 600px) {
+    .contact { padding: 80px 24px 40px; }
+    .info-card, .connect-card, .form-card { padding: 18px; }
+    .icon-box { width: 48px; height: 48px; border-radius: 12px; }
+    .icon-box i { font-size: 18px; }
+    .info-content h3 { font-size: 16px; }
+    .info-content p { font-size: 13px; }
+    .connect-item { padding: 12px 14px; }
+    .form-card { padding: 20px; }
+}
 
-    .contact-info {
-        font-size: 15px;
-        text-align: center;
-    }
-
-    .contact-form {
-        align-items: center;
-    }
-
-    .btn-submit {
-        align-self: center;
-    }
+@media (max-width: 480px) {
+    .contact { padding: 70px 18px 36px; }
+    .contact-submit { width: 100%; align-self: stretch; text-align: center; }
 }
